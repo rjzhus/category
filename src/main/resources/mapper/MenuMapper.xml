@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.category.mapper.MenuMapper">
+    <!-- 结果集 -->
+    <resultMap type="com.example.category.entity.Menu" id="MenuMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="icon" column="icon" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="types" column="types" jdbcType="VARCHAR"/>
+        <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <result property="seq" column="seq" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        id, name, icon, path, types, parent_id, seq    </sql>
+
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="MenuMap">
+        select
+        <include refid="Base_Column_List"/>
+        from menu
+        where id = #{id}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="MenuMap">
+        select
+        <include refid="Base_Column_List"/>
+        from menu
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="MenuMap">
+        select
+        <include refid="Base_Column_List"/>
+        from menu
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="MenuMap">
+        select
+        <include refid="Base_Column_List"/>
+        from menu
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="icon != null and icon != ''">
+                and icon = #{icon}
+            </if>
+            <if test="path != null and path != ''">
+                and path = #{path}
+            </if>
+            <if test="types != null and types != ''">
+                and types = #{types}
+            </if>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+            <if test="seq != null">
+                and seq = #{seq}
+            </if>
+        </where>
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into menu(id, name, icon, path, types, parent_id, seq)
+        values ( #{id}, #{name}, #{icon}, #{path}, #{types}, #{parentId}, #{seq})
+    </insert>
+
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into menu(id, name, icon, path, types, parent_id, seq)
+        values
+        <foreach collection="menus" item="item" index="index" separator=",">
+            (
+            #{item.id}, #{item.name}, #{item.icon}, #{item.path}, #{item.types}, #{item.parentId}, #{item.seq} )
+        </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update category.menu
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="icon != null and icon != ''">
+                icon = #{icon},
+            </if>
+            <if test="path != null and path != ''">
+                path = #{path},
+            </if>
+            <if test="types != null and types != ''">
+                types = #{types},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="seq != null">
+                seq = #{seq},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from menu where id = #{id}
+    </delete>
+
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from menu
+    </select>
+</mapper>
+
+

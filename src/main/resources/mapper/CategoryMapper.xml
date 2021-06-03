@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.category.mapper.CategoryMapper">
+    <!-- 结果集 -->
+    <resultMap type="com.example.category.entity.Category" id="CategoryMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="pid" column="pid" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        id, name, pid    </sql>
+    
+    <!-- 查询单个 -->
+    <select id="selectById" resultMap="CategoryMap">
+        select
+          <include refid="Base_Column_List" />
+        from category
+        where id = #{id}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="CategoryMap">
+        select
+        <include refid="Base_Column_List" />
+        from category
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="CategoryMap">
+        select
+        <include refid="Base_Column_List" />
+        from category
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectList" resultMap="CategoryMap">
+        select
+        <include refid="Base_Column_List" />
+        from category
+        <where>
+                    <if test="id != null">
+                and id = #{id}
+            </if>
+                    <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+                    <if test="pid != null">
+                and pid = #{pid}
+            </if>
+                </where>
+    </select>
+
+    <!-- 新增所有列 -->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into category(id, name, pid)
+        values ( #{id}, #{name}, #{pid})
+    </insert>
+    
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into category(id, name, pid)
+        values 
+        <foreach collection="categorys" item="item" index="index" separator=",">
+        (
+                        #{item.id},             #{item.name},             #{item.pid}         )
+         </foreach>
+    </insert>
+
+    <!-- 通过主键修改数据 -->
+    <update id="update">
+        update category.category
+        <set>
+                    <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+                    <if test="pid != null">
+                pid = #{pid},
+            </if>
+                </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from category where id = #{id}
+    </delete>
+    
+    <!-- 总数 -->
+    <select id="count" resultType="int">
+        select count(*) from category
+    </select>
+</mapper>
